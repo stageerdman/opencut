@@ -25,6 +25,34 @@ irrelevant to `dev`/`build`. Don't assume a video-editor app needs cloud
 storage credentials just to boot; check actual `process.env`/`import.meta.env`
 usage before adding anything to `.env`.
 
+## The desktop shell is GPUI, not Tauri
+The AI Control scaffold (`.project`, `CLAUDE.md`) initially described
+`apps/desktop` as a Tauri shell — wrong. It's built on
+[GPUI](https://www.gpui.rs) (Zed's UI framework), a plain Rust binary with no
+Tauri/webview layer at all. Corrected in both files. Lesson: don't trust a
+first-pass scaffold description of upstream's stack without checking
+`Cargo.toml`/the app's own README — upstream READMEs are the source of truth.
+
+## macOS needs the Metal Toolchain installed separately for GPUI
+`cargo build -p opencut-desktop` failed with `metal shader compilation
+failed: cannot execute tool 'metal' due to missing Metal Toolchain` even with
+Xcode command line tools installed (`xcode-select -p` succeeding). Xcode CLT
+alone doesn't ship the Metal shader compiler on current macOS/Xcode — it's a
+separate downloadable component:
+```sh
+xcodebuild -downloadComponent MetalToolchain   # ~840MB
+```
+After that, `cargo build -p opencut-desktop` / `moon run desktop:dev` compile
+clean. Worth checking for anyone else building a GPUI (or other
+Metal-shader-using Rust) app on a fresh Mac.
+
+## proto's shims aren't on PATH by default
+The proto install script (`curl -fsSL https://moonrepo.dev/install/proto.sh |
+bash`) installs the binaries to `~/.proto/bin` and `~/.proto/shims` but
+doesn't touch `~/.zshrc` — needed `export PATH="$HOME/.proto/shims:$HOME/.proto/bin:$PATH"`
+added manually. Without the shims dir specifically, `proto run`-aware tool
+version switching won't engage even if the raw binaries are found.
+
 ## Fresh history, not a fork
 We cloned upstream, dropped its `.git`, and started this repo's own history
 at one commit containing the full upstream snapshot plus the AI Control

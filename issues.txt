@@ -2,15 +2,6 @@ OpenCut — known issues and TODOs
 Running list. Resolved items move to the relevant update's wiki.md.
 
 == OPEN ==
-- [ ] `apps/api` (Cloudflare Workers/Elysia stub) not yet run or verified here
-      — only `apps/web` has been installed and dev-tested.
-- [ ] `apps/desktop` (Tauri/Rust) not yet built or run — needs the pinned Rust
-      toolchain (.prototools wants 1.97.0; machine has 1.97.1, untested
-      against this project) and Tauri's native deps.
-- [ ] `proto` + `moon` are not installed; `apps/web` was run directly with
-      `bun install && bun run dev` instead of `moon run web:dev`. Fine for now
-      since moon just wraps that same script, but cross-app orchestration
-      (moon run desktop:dev, workspace-wide tasks) needs them installed.
 - [ ] Upstream is mid-rewrite and explicitly not accepting outside
       contributions yet (per their README) — expect frequent upstream
       architecture changes; re-pull/re-diff deliberately rather than drifting

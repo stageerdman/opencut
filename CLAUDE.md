@@ -19,10 +19,10 @@ server, headless mode, in-editor scripting) rather than designing around it.
   foreign structure on it.** It's a moon + bun workspace:
   - `apps/web` — the editor (TanStack Start / React 19 / Vite, Cloudflare).
   - `apps/api` — Cloudflare Workers API stub (Elysia).
-  - `apps/desktop` — Tauri (Rust) desktop shell.
+  - `apps/desktop` — GPUI (Rust, Zed's UI framework) desktop shell.
   - `crates/media` — shared Rust media core.
   - `.prototools` pins `moon`, `bun`, `rust` versions workspace-wide.
-- **Rust/Tauri (`apps/desktop`, `crates/media`):** build output goes to the
+- **Rust (`apps/desktop` on GPUI, `crates/media`):** build output goes to the
   shared Cargo target (`~/.cargo-shared-target`), never a per-project
   `target/`. Don't add a `CARGO_TARGET_DIR` override.
 - **Updates** go in `updates/YYYY-MM-DD NAME - OPEN|CLOSED/` folders, each with
@@ -38,7 +38,7 @@ server, headless mode, in-editor scripting) rather than designing around it.
   task actually needs, don't add abstraction on speculation, and don't
   "clean up" architecture decisions that are still in flux upstream.
 - **Idiomatic to the ecosystem.** Match the existing conventions exactly:
-  TanStack Start/React patterns in `apps/web`, Elysia in `apps/api`, Rust/Tauri
+  TanStack Start/React patterns in `apps/web`, Elysia in `apps/api`, GPUI/Rust
   idioms in `apps/desktop` and `crates/media`. Read the neighboring code before
   writing.
 - **Test what matters.** `apps/web` uses `vitest` (`bun run test`). Cover core

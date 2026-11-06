@@ -21,7 +21,8 @@ Monorepo (moon + bun workspaces):
 - `apps/web` — the editor itself. TanStack Start (React 19) on Vite, deployed
   to Cloudflare via the Cloudflare Vite plugin. `localhost:5173`.
 - `apps/api` — a Cloudflare Workers API stub (Elysia). `localhost:8787`.
-- `apps/desktop` — Tauri (Rust) desktop shell. See `apps/desktop/README.md`.
+- `apps/desktop` — GPUI (Rust, Zed's UI framework) desktop shell. See
+  `apps/desktop/README.md`.
 - `crates/media` — shared Rust media core.
 
 Per upstream's own README: **the rewrite is early and not yet open to outside
@@ -31,18 +32,27 @@ scripting tab are all still landing. Treat this as tracking a moving target,
 not a finished app.
 
 ## How to run
-```sh
-cd apps/web && bun install && bun run dev   # http://localhost:5173
-```
-Verified working 2026-11-06: `bun install` (576 packages) then `bun run dev`
-serves the real OpenCut page via Vite + the Cloudflare adapter, no errors.
-The API (`cd apps/api && bun install && bun run dev`) and desktop app were not
-exercised yet — desktop needs the Rust/Tauri toolchain (`.prototools` pins
-`rust = 1.97.0`, machine has 1.97.1) and is unverified.
+`proto`, `moon`, and `bun` are installed and on `PATH` (via `~/.proto/shims`
+and `~/.proto/bin`, added to `.zshrc`). Pinned versions from `.prototools` are
+installed: `moon 2.3.3`, `bun 1.3.11`, `rust 1.97.0`.
 
-Upstream also expects `proto` + `moon` for the full pinned-toolchain, cross-app
-`moon run <app>:dev` workflow; neither is installed here yet — `bun` alone is
-enough to run `apps/web`. See `.prototools` for pinned versions.
+```sh
+moon run web:dev       # http://localhost:5173 — TanStack Start editor
+moon run api:dev       # http://localhost:8787 — Workers/Elysia stub
+moon run desktop:dev   # opens the GPUI desktop window
+```
+Or drive each app directly (`cd apps/<app> && bun install && bun run dev`,
+or `cargo run` for desktop) — moon's tasks are thin wrappers around the same
+commands.
+
+All three verified working 2026-11-06:
+- `apps/web` — Vite + Cloudflare adapter serves the real page, no errors.
+- `apps/api` — `wrangler dev` boots on `:8787`; `/`, `/health`, `/echo` all
+  respond correctly.
+- `apps/desktop` — compiles and runs (GPUI window app). Required installing
+  the macOS Metal Toolchain component first (`xcodebuild -downloadComponent
+  MetalToolchain`) — the shader compiler isn't in Xcode CLT by default and
+  `cargo build` fails on `metal shader compilation failed` without it.
 
 ## Secrets
 None needed to run the app locally. `.env.example` (`R2_BUCKET=opencut-assets`)
@@ -51,6 +61,6 @@ Cloudflare R2) — not required for dev or build.
 
 ## Status
 Pulled in under AI Control on 2026-11-06, upstream git history dropped (this
-repo starts its own history). `apps/web` installs and runs clean. See
-`issues.txt` for what's unverified and `updates/2026-11-06 INIT - OPEN/` for
-the setup record.
+repo starts its own history). All three apps (`web`, `api`, `desktop`) install
+and run clean. See `issues.txt` for what's still open and
+`updates/2026-11-06 INIT - CLOSED/` for the setup record.

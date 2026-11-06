@@ -1,6 +1,6 @@
 # INIT — OpenCut
 
-**Status:** OPEN · created 2026-11-06 · plan v1
+**Status:** CLOSED · created 2026-11-06 · closed 2026-11-06 · plan v1
 
 ## Goal
 Setup this project and make it work as an app — no invented features, no
@@ -56,26 +56,42 @@ scripting tab.
 - **Verify:** repo visible on GitHub, default branch pushed, `git status`
   clean locally.
 
+### Phase 4 — Verify the remaining apps + full toolchain
+- Install `apps/api` deps and run `wrangler dev`; hit `/`, `/health`, `/echo`.
+- Install `proto` + the pinned toolchain (`moon`, `bun`, `rust` per
+  `.prototools`); put `proto`'s shims on `PATH` via `.zshrc`.
+- Build and run `apps/desktop` (GPUI, not Tauri — corrected a scaffold
+  inaccuracy; see `wiki.md`). Fix the macOS Metal Toolchain gap this
+  surfaced.
+- Confirm `moon run <app>:dev`/`:check` orchestration actually works end to
+  end, not just the direct `bun`/`cargo` commands.
+- **Verify:** all three apps (web, api, desktop) install and run clean via
+  both the direct commands and `moon run`.
+
 ## Status tracking
 - [x] Phase 1 — scaffold — DONE.
-- [x] Phase 2 — install and run `apps/web` — DONE & VERIFIED (see above).
-      `apps/api` and `apps/desktop` **not yet** installed/run — tracked in
-      `issues.txt`.
+- [x] Phase 2 — install and run `apps/web` — DONE & VERIFIED.
 - [x] Phase 3 — GitHub repo + first commit — DONE.
+- [x] Phase 4 — verify `apps/api`, `apps/desktop`, `proto`+`moon` — DONE &
+      VERIFIED (see `wiki.md` for the Metal Toolchain and GPUI-vs-Tauri
+      lessons).
 
 ## Where we are (handoff — 2026-11-06)
-`apps/web` runs clean locally with `bun install && bun run dev`. No secrets
-are required for local dev. `apps/api` and the Rust/Tauri `apps/desktop` are
-present but unverified — next session should install `bun` deps for `apps/api`
-and confirm `wrangler dev` works, then attempt a Tauri dev build once/if the
-desktop app is prioritized. `proto`/`moon` aren't installed; everything so far
-was run with `bun` directly since moon's `web:dev` task is just `bun run dev`
-under the hood.
+All three apps now install and run clean:
+- `apps/web` — `bun install && bun run dev`, or `moon run web:dev`.
+- `apps/api` — `bun install && bun run dev` (wrangler on `:8787`), or
+  `moon run api:dev`. `/`, `/health`, `/echo` all verified.
+- `apps/desktop` — `cargo run` (binary lands in `~/.cargo-shared-target/debug/`
+  per the shared-target convention, not a local `target/`), or
+  `moon run desktop:dev`. Needed the macOS Metal Toolchain component
+  installed first.
+
+`proto` + `moon` are installed and on `PATH` (`~/.proto/shims`,
+`~/.proto/bin`, added to `~/.zshrc`). Pinned versions match `.prototools`:
+moon 2.3.3, bun 1.3.11, rust 1.97.0.
 
 ## NEXT STEP (resume here)
-1. `cd apps/api && bun install && bun run dev` — verify the Workers stub
-   responds on `:8787` (`/health`).
-2. Decide whether to install `proto` + `moon` for the full pinned-toolchain
-   workflow, or keep driving each app directly with `bun`/`cargo`.
-3. If/when desktop work is wanted: install the Tauri prerequisites and attempt
-   `apps/desktop`'s dev build per `apps/desktop/README.md`.
+Everything in the original "make it work" goal is done and verified. No open
+next step — future work on this project is feature/task-driven, not setup.
+Re-check `issues.txt` for the one standing item (upstream is mid-rewrite,
+re-diff deliberately rather than drifting out of sync).
