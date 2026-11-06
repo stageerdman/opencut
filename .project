@@ -1,0 +1,56 @@
+---
+name: OpenCut
+github: https://github.com/stageerdman/opencut
+visibility: public
+adopted: 2026-11-06
+claude_md_generated: 2026-11-06
+modules: [WORKFLOW, STRUCTURE, CODING, UX]
+secrets: []
+---
+
+# OpenCut
+
+A **free, open-source video editor for web, desktop, and mobile**, pulled in
+as-is from upstream [`opencut-app/opencut`](https://github.com/opencut-app/opencut)
+(the ground-up rewrite — the old version lives at `opencut-app/opencut-classic`
+and still runs on opencut.app). This repo is a personal working copy: the code
+was not reinvented or restructured, only wrapped in the standard AI Control
+scaffold so it can be run, tracked, and iterated on here.
+
+Monorepo (moon + bun workspaces):
+- `apps/web` — the editor itself. TanStack Start (React 19) on Vite, deployed
+  to Cloudflare via the Cloudflare Vite plugin. `localhost:5173`.
+- `apps/api` — a Cloudflare Workers API stub (Elysia). `localhost:8787`.
+- `apps/desktop` — Tauri (Rust) desktop shell. See `apps/desktop/README.md`.
+- `crates/media` — shared Rust media core.
+
+Per upstream's own README: **the rewrite is early and not yet open to outside
+contributions** — an Editor API, plugin architecture, one Rust core across
+web/desktop/mobile, an MCP server, headless/automation mode, and an in-editor
+scripting tab are all still landing. Treat this as tracking a moving target,
+not a finished app.
+
+## How to run
+```sh
+cd apps/web && bun install && bun run dev   # http://localhost:5173
+```
+Verified working 2026-11-06: `bun install` (576 packages) then `bun run dev`
+serves the real OpenCut page via Vite + the Cloudflare adapter, no errors.
+The API (`cd apps/api && bun install && bun run dev`) and desktop app were not
+exercised yet — desktop needs the Rust/Tauri toolchain (`.prototools` pins
+`rust = 1.97.0`, machine has 1.97.1) and is unverified.
+
+Upstream also expects `proto` + `moon` for the full pinned-toolchain, cross-app
+`moon run <app>:dev` workflow; neither is installed here yet — `bun` alone is
+enough to run `apps/web`. See `.prototools` for pinned versions.
+
+## Secrets
+None needed to run the app locally. `.env.example` (`R2_BUCKET=opencut-assets`)
+is only for the ops-only `upload-logos` moon task (pushes brand SVGs to
+Cloudflare R2) — not required for dev or build.
+
+## Status
+Pulled in under AI Control on 2026-11-06, upstream git history dropped (this
+repo starts its own history). `apps/web` installs and runs clean. See
+`issues.txt` for what's unverified and `updates/2026-11-06 INIT - OPEN/` for
+the setup record.
